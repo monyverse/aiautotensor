@@ -1,5 +1,6 @@
 import torch
 import subprocess
+import cubit
 import bittensor as bt
 
 # Define the is_registered() function
@@ -18,21 +19,8 @@ def is_registered(wallet, subtensor: 'bt.Subtensor' = None) -> bool:
         subtensor = bt.subtensor()
     return subtensor.is_hotkey_registered(wallet.hotkey.ss58_address)
 
-# Create a new wallet object
-wallet = bt.wallet(name="<>", hotkey="<>")
-
-# Define a list of wallets
-wallets = [wallet]
-for wallet in wallets:
-    # Check if the wallet is registered
-    if not is_registered(wallet):
-        # Register the wallet using the specified GPUs
-        wallet.register()
-    else:
-        def deploy_core_server(vr_threshold: int, vram_used: list):
-
 # Define the deploy_core_server function
-def deploy_core_server(vr_threshold: int, vram_used: list):
+def deploy_core_server(vr_threshold: int = 4800, vram_used: list = []):
     """Deploys a bittensor core_server on a GPU with VRAM usage below the specified threshold.
        Args:
                vr_threshold: VRAM threshold below which a bittensor core_server is deployed.
@@ -67,3 +55,44 @@ def deploy_core_server(vr_threshold: int, vram_used: list):
 
             # Start the server
             subtensor.serve(model=model, metagraph=metagraph)
+            pass
+
+# Define the create_array() function
+def create_array():
+    # Get the number of GPUs on the system
+    num_gpus = torch.cuda.device_count()
+
+    # Create a list of numbers from 0 to num_gpus (inclusive)
+    range_array = list(range(num_gpus))
+
+    # Concatenate the elements of the range_array list into a single string
+    # with a space between each number
+    range_string = ' '.join(str(x) for x in range_array)
+
+    # Return the resulting string
+    return range_string
+
+
+# Get the number of GPUs on the system
+num_gpus = torch.cuda.device_count()
+
+# Define a list of wallets
+wallets = []
+for i in range(num_gpus):
+    # Create a new wallet object for each GPU
+    wallet = bt.wallet(name="Nicomachus", hotkey="Eugene")
+    wallets.append(wallet)
+
+    # Check if the wallet is registered
+    if not is_registered(wallet):
+        # Create a subtensor object for the current GPU
+        subtensor = bt.subtensor()
+
+        # Register the wallet using the current GPU
+        range_string = create_array()
+        command = "btcli register --subtensor.network local --wallet.name {} --wallet.hotkey Intelligence --cuda --cuda.dev_id {} --cuda.TPB 512 --cuda.update_interval 250_000 --no_prompt".format(wallet.name, range_string)
+
+        # Run the command in the command line
+        subprocess.run(command, shell=True)
+    else:
+        deploy_core_server()
