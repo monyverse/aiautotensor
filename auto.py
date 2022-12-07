@@ -80,7 +80,7 @@ num_gpus = torch.cuda.device_count()
 wallets = []
 for i in range(num_gpus):
     # Create a new wallet object for each GPU
-    wallet = bt.wallet(name="Nicomachus", hotkey="Eugene")
+    wallet = bt.wallet(name="<>", hotkey="<>")
     wallets.append(wallet)
 
     # Check if the wallet is registered
@@ -90,7 +90,7 @@ for i in range(num_gpus):
 
         # Register the wallet using the current GPU
         range_string = create_array()
-        command = "btcli register --subtensor.network local --wallet.name {} --wallet.hotkey Intelligence --cuda --cuda.dev_id {} --cuda.TPB 512 --cuda.update_interval 250_000 --no_prompt".format(wallet.name, range_string)
+        command = "btcli register --subtensor.network local --wallet.name {} --wallet.hotkey {} --cuda --cuda.dev_id {} --cuda.TPB 512 --cuda.update_interval 250_000 --no_prompt".format(wallet.name, range_string)
 
         # Run the command in the command line
         subprocess.run(command, shell=True)
