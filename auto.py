@@ -23,10 +23,10 @@ def is_registered(wallet, subtensor: 'bt.Subtensor' = None) -> bool:
 def deploy_core_server(vr_threshold: int = 4800, vram_used: list = []):
     """Deploys a bittensor core_server on a GPU with VRAM usage below the specified threshold.
        Args:
-               vr_threshold: VRAM threshold below which a bittensor core_server is deployed.
-               vram_used: List of VRAM usage values, in bytes.
+               vr_threshold: VRAM threshold. If below threshold, deploy a Server
+               vram_used: List of VRAM usage values (bytes)
        """
-    # Use the nvidia-smi command to get the VRAM usage of each GPU
+    # Check nvidia-smi to get VRAM usage per GPU
     output = subprocess.check_output(["nvidia-smi", "--query-gpu=memory.used", "--format=csv,noheader,nounits"])
 
     # Parse the output to get the VRAM usage of each GPU
@@ -35,64 +35,57 @@ def deploy_core_server(vr_threshold: int = 4800, vram_used: list = []):
         if line == b'':
             continue
 
-        # Convert the VRAM usage from bytes to MiB
+        # Convert VRAM usage from bytes to MB
         vram_used = int(line.strip())
 
-        # If the VRAM usage is below the threshold, deploy a bittensor core_server
+        # If the VRAM usage < threshold, deploy core_server
         if vram_used < vr_threshold:
             print(f"Deploying bittensor core_server on GPU with {vram_used} MB of VRAM")
-            # Load the core_server model
-            model = bt.neurons.core_server.server()
-
-            # Create a config object
+            # Run core_server
             config = bt.config()
+            subtensor = bt.subtensor(network = "nakamoto")
+            wallet = bt.wallet()
+            axon = bt.axon()
+            metagraph = bt.metagraph()
 
-            # Sync the metagraph
-            metagraph = bt.metagraph().load().sync().save()
-
-            # Create a new Subtensor object
-            subtensor = bt.subtensor(config=config, network="nakamoto")
-
-            # Start the server
-            subtensor.serve(model=model, metagraph=metagraph)
+            # Run the core server
+            template = bt.neurons.core_server.neuron(config, subtensor, wallet, axon, metagraph).run()
             pass
 
-# Define the create_array() function
+# Create an array for GPUs
 def create_array():
-    # Get the number of GPUs on the system
+    # Get the number of GPUs
     num_gpus = torch.cuda.device_count()
 
-    # Create a list of numbers from 0 to num_gpus (inclusive)
+    # Create a list of numbers from 0 to num_gpus
     range_array = list(range(num_gpus))
 
-    # Concatenate the elements of the range_array list into a single string
-    # with a space between each number
+    # Concatenate the elements of the range_array list into a string with a space between each number
     range_string = ' '.join(str(x) for x in range_array)
 
-    # Return the resulting string
     return range_string
 
 
-# Get the number of GPUs on the system
+# Get the number of GPUs
 num_gpus = torch.cuda.device_count()
 
 # Define a list of wallets
 wallets = []
 for i in range(num_gpus):
-    # Create a new wallet object for each GPU
     wallet = bt.wallet(name="<>", hotkey="<>")
     wallets.append(wallet)
-
+    
     # Check if the wallet is registered
     if not is_registered(wallet):
         # Create a subtensor object for the current GPU
         subtensor = bt.subtensor()
 
-        # Register the wallet using the current GPU
+        # Register the wallet
         range_string = create_array()
-        command = "btcli register --subtensor.network local --wallet.name {} --wallet.hotkey {} --cuda --cuda.dev_id {} --cuda.TPB 512 --cuda.update_interval 250_000 --no_prompt".format(wallet.name, range_string)
+        command = "btcli register --subtensor.network local --wallet.name {} --wallet.hotkey {} --cuda --cuda.dev_id {} --cuda.TPB 512 --cuda.update_interval 70_000 --no_prompt".format(wallet.name, range_string)
 
-        # Run the command in the command line
+        # Run on command line
         subprocess.run(command, shell=True)
     else:
+        # Run a Server
         deploy_core_server()
