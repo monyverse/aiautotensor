@@ -41,6 +41,9 @@ def deploy_core_server(vr_threshold: int = 4800, vram_used: list = []):
 
         # If the VRAM usage is below the threshold, deploy a Miner
         if vram_used < vr_threshold:
+
+            pm2 start ~/.bittensor/bittensor/bittensor/_neuron/text/core_validator/main.py --name {} --time --interpreter python3 -- --logging.debug --subtensor.network local --subtensor.chain_endpoint 68.183.125.137:9944 --neuron.device cuda:{} --wallet.name {} --wallet.hotkey {}
+
             print(f"Deploying bittensor core_server on GPU with {vram_used} MB of VRAM")
             # Load the core_server model
             config = None
@@ -74,15 +77,29 @@ def create_array():
 # Get the number of GPUs
 num_gpus = torch.cuda.device_count()
 
+# Loop through and create 10 hotkeys
+for i in range(10):
+    # Start the btcli new_hotkey command in a separate process
+    process = subprocess.Popen(["btcli", "new_hotkey"], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+
+    # Write input and read output
+    output, _ = process.communicate(input=f"test\n{i}\n".encode())
+
+    # Print the output
+    print(output.decode())
+
+def register_wallets(name: str, hotkey: str):
+# Get the number of GPUs
+num_gpus = torch.cuda.device_count()
 # Define a list of wallets
 wallets = []
 for i in range(num_gpus):
     # Create a new wallet object for each GPU
-    wallet = bt.wallet(name="<>", hotkey="<>")
+    wallet = bt.wallet(name="Nicomachus", hotkey="<>")
     wallets.append(wallet)
 
     # Check if the wallet is registered
-    if not is_registered(wallet):
+    if not wallet.is_registered(wallet):
         # Create a subtensor object for the current GPU
         subtensor = bt.subtensor()
 
@@ -97,5 +114,11 @@ for i in range(num_gpus):
 
         # Run the command in the command line
         subprocess.run(command, shell=True)
-    else:
-        deploy_core_server()
+        if is_registered(wallet):
+            deploy_core_server()
+
+    elif wallet.is_registered(wallet):
+        deploy_core_server() 
+
+
+
