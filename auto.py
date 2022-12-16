@@ -114,13 +114,13 @@ for i in range(num_gpus):
         # Register the wallet using all GPUs.
         command = (
             f"btcli register "
-            "--subtensor.network {NETWORK} "
-            "--wallet.name {wallet.name} "
-            "--wallet.hotkey {wallet.hotkey_str} "
-            "--cuda --cuda.dev_id {range_string} "
-            "--cuda.TPB 512 "
-            "--cuda.update_interval 250_000 "
-            "--no_prompt"
+            f"--subtensor.network {NETWORK} "
+            f"--wallet.name {wallet.name} "
+            f"--wallet.hotkey {wallet.hotkey_str} "
+            f"--cuda --cuda.dev_id {range_string} "
+            f"--cuda.TPB 512 "
+            f"--cuda.update_interval 250_000 "
+            f"--no_prompt"
         )
         print(command)
         subprocess.run(command, shell=True)
