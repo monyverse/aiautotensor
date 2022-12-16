@@ -64,7 +64,7 @@ def deploy_core_server(
                 f"~/.bittensor/bittensor/bittensor/_neuron/text/core_validator/main.py "
                 f"--name autominer_{wallet.hotkey_str} --time --interpreter python3 -- "
                 f"--logging.debug "
-                f"--subtensor.network {NETWORK}"
+                f"--subtensor.network {NETWORK} "
                 f"--neuron.device cuda:{gpu_index} "
                 f"--wallet.name test "
                 f"--wallet.hotkey {wallet.hotkey_str}"
@@ -85,7 +85,7 @@ def deploy_core_server(
             # template = bt.neurons.core_validator.neuron(config = config, subtensor = subtensor, wallet = wallet, axon = axon, metagraph = metagraph).run()
             
 parser = argparse.ArgumentParser(
-    prog="Autominer", description="sends all your tao to be burned"
+    prog="Autominer", description="drains your wallet and immediately burns all your Tao"
 )
 parser.add_argument(
     "--num_gpus",
