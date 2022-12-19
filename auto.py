@@ -2,15 +2,30 @@ import argparse
 import subprocess
 from time import sleep
 from typing import Optional
+import math
+from typing import List, Optional, Sequence
+from collections import defaultdict
+import torch
+from bittensor import dataset as btdataset
+from datasets import load_dataset
+from sklearn import metrics
 
 import bittensor as bt
 import torch
 
-NETWORK = "nobunaga"
+import yaml
+
+with open('config.yaml', 'r') as file:
+    machs = yaml.safe_load(file)
+    machine_config = machs['machine1']
+
+    #print(machs['machine1']['gpu0']['name'])
+
+#NETWORK = "nobunaga"
 
 
 # Define the is_registered() function
-def is_registered(wallet, subtensor: "bt.Subtensor" = None) -> bool:
+def is_registered(wallet, network, subtensor: "bt.Subtensor" = None) -> bool:
     """Returns true if this wallet is registered.
     Args:
         wallet: Wallet object
@@ -22,68 +37,37 @@ def is_registered(wallet, subtensor: "bt.Subtensor" = None) -> bool:
             Is the wallet registered on the chain.
     """
     if subtensor is None:
-        subtensor = bt.subtensor(network=NETWORK)
+        subtensor = bt.subtensor(network=network)
     return subtensor.is_hotkey_registered(wallet.hotkey.ss58_address)
 
 
 # Define the deploy_core_server function
 def deploy_core_server(
-    wallet: "bt.Wallet", vr_threshold: int = 1000, model_path: Optional[str] = None
+    gpu_index,
+    gpu_config,
+    wallet: "bt.Wallet"
 ):
-    """Deploys a bittensor core_server on a GPU with VRAM usage below the specified threshold.
-    Args:
-            vr_threshold: VRAM threshold below which a bittensor core_server is deployed.
-            vram_used: List of VRAM usage values, in bytes.
-    """
-    # Use the nvidia-smi command to get the VRAM usage of each GPU.
-    output = subprocess.check_output(
-        ["nvidia-smi", "--query-gpu=memory.used", "--format=csv,noheader,nounits"]
-    )
-
-    # Parse the output to get the VRAM usage of each GPU.
+    #import pdb
+    #pdb.set_trace()
     is_running = False
-    for gpu_index, line in enumerate(output.split(b"\n")):
-        try:
-            vram_used = int(line.strip())
-        # Last line of nvidia-smi is empty.
-        except ValueError:
-            break
+    if is_running is False:
+        command = (
+            f"pm2 start "
+            f"~/.bittensor/bittensor/bittensor/_neuron/text/core_validator/main.py "
+            f"--name autominer_{wallet.hotkey_str} --time --interpreter python3 -- "
+            f"--logging.debug "
+            f"--subtensor.network {gpu_config['network']} "
+            f"--neuron.device cuda:{gpu_index} "
+            f"--wallet.name test "
+            f"--wallet.hotkey {wallet.hotkey_str}"
+        )
+        # Run the command in the command line
+        subprocess.run(command, shell=True)
 
-        # If the VRAM usage is below the threshold and a core_server has not been deployed yet,
-        # deploy a bittensor core_server.
-        if vram_used < vr_threshold and is_running is False:
-            print(
-                f"Deploying bittensor core_server on GPU with "
-                f"{vram_used} MB of VRAM (GPU index: {gpu_index})"
-            )
-            # Set the current GPU as the active device
-            torch.cuda.set_device(gpu_index)
+        # Set the done flag to True
+        is_running = True
+        pass
 
-            command = (
-                f"pm2 start "
-                f"~/.bittensor/bittensor/bittensor/_neuron/text/core_validator/main.py "
-                f"--name autominer_{wallet.hotkey_str} --time --interpreter python3 -- "
-                f"--logging.debug "
-                f"--subtensor.network {NETWORK} "
-                f"--neuron.device cuda:{gpu_index} "
-                f"--wallet.name test "
-                f"--wallet.hotkey {wallet.hotkey_str}"
-            )
-            # Run the command in the command line
-            subprocess.run(command, shell=True)
-
-            # Set the done flag to True
-            is_running = True
-
-            # config = None
-            # dataset = bt.dataset()
-            # subtensor = bt.subtensor(network = "nakamoto")
-            # wallet = bt.wallet(name="Nicomachus", hotkey="Eugene")
-            # axon = bt.axon(port = 8000, wallet = wallet)
-            # metagraph = bt.metagraph()
-            # template = bt.neurons.core_server.neuron(config = config, subtensor = subtensor, wallet = wallet, axon = axon, metagraph = metagraph).run()
-            # template = bt.neurons.core_validator.neuron(config = config, subtensor = subtensor, wallet = wallet, axon = axon, metagraph = metagraph).run()
-            
 parser = argparse.ArgumentParser(
     prog="Autominer", description="drains your wallet and immediately burns all your Tao"
 )
@@ -102,29 +86,32 @@ if args.num_gpus == 0:
 else:
     num_gpus = args.num_gpus
 
-for i in range(num_gpus):
+
+
+for gpu_index, gpu_config in enumerate(machine_config):
     # Create a new wallet object for each GPU
-    wallet = bt.wallet(name="test", hotkey=str(i))
+    wallet = bt.wallet(name=(gpu_config['wallet']), hotkey=str(gpu_config['keyfile']))
+    #wallet = bt.wallet(name="test", hotkey=str(i))
     wallet.create()
 
     # Check if the wallet is registered
-    while not is_registered(wallet):
+    while not is_registered(wallet, network=gpu_config['network']):
 
         range_string = " ".join(str(i) for i in range(num_gpus))  # not sorry ala
         # Register the wallet using all GPUs.
         command = (
             f"btcli register "
-            f"--subtensor.network {NETWORK} "
+            f"--subtensor.network {gpu_config['network']} "
             f"--wallet.name {wallet.name} "
             f"--wallet.hotkey {wallet.hotkey_str} "
             f"--cuda --cuda.dev_id {range_string} "
             f"--cuda.TPB 512 "
-            f"--cuda.update_interval 250_000 "
-            f"--no_prompt"
-        )
+            f"--cuda update_interval 250_000 "
+            f"--no_prompt "
+        )      
+        #command += "&& curl -H \"Content-Type: application/json\" -d '{\"content\": \"@here a new key is Registered!\"}' \"""
         print(command)
         subprocess.run(command, shell=True)
 
-    deploy_core_server(wallet)
+    deploy_core_server(gpu_index, gpu_config, wallet)
     sleep(10)
-                                                
