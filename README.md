@@ -12,7 +12,7 @@ cd ~/.ssh
 vim config
 ```
 
-```bash
+```
 Host <>
 	HostName <IP>
 	Port <>
@@ -37,7 +37,7 @@ Step 2:
 
 	Open the directory:
 
-		```bash
+		```
 		cd ~/.autominer
 		```
 
@@ -47,7 +47,7 @@ Step 2:
 
 	Each “-” represents a GPU
 
-		```bash
+		```
 		machine1:
 		  -
 		    name: "a"
