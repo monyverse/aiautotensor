@@ -1,25 +1,11 @@
 import argparse
+import os
 import subprocess
 from time import sleep
-from typing import Optional
-import math
-from typing import List, Optional, Sequence
-from collections import defaultdict
-import torch
-from bittensor import dataset as btdataset
-from datasets import load_dataset
-from sklearn import metrics
-
 import bittensor as bt
 import torch
-
 import yaml
 
-with open('config.yaml', 'r') as file:
-    machs = yaml.safe_load(file)
-    machine_config = machs['machine1']
-
-    #print(machs['machine1']['gpu0']['name'])
 
 #NETWORK = "nobunaga"
 
@@ -47,17 +33,19 @@ def deploy_core_server(
     gpu_config,
     wallet: "bt.Wallet"
 ):
-    #import pdb
+    import pdb
     #pdb.set_trace()
     is_running = False
     if is_running is False:
         command = (
             f"pm2 start "
-            f"~/.bittensor/bittensor/bittensor/_neuron/text/core_validator/main.py "
-            f"--name autominer_{wallet.hotkey_str} --time --interpreter python3 -- "
+            f"~/.bittensor/bittensor/bittensor/_neuron/text/core_server/main.py "
+            f"--name {gpu_config['name']}_{wallet.hotkey_str} --time --interpreter python3 -- "
             f"--logging.debug "
             f"--subtensor.network {gpu_config['network']} "
             f"--neuron.device cuda:{gpu_index} "
+            f"--neuron.model_name{gpu_config['model']} "
+            f"--axon.port {gpu_config['port']} "
             f"--wallet.name test "
             f"--wallet.hotkey {wallet.hotkey_str}"
         )
@@ -68,50 +56,43 @@ def deploy_core_server(
         is_running = True
         pass
 
-parser = argparse.ArgumentParser(
-    prog="Autominer", description="drains your wallet and immediately burns all your Tao"
-)
-parser.add_argument(
-    "--num_gpus",
-    default=0,
-    type=int,
-    help="How many GPUs to use for registration. Defaults to all available GPUs.",
-)
 
-args = parser.parse_args()
+num_gpus = torch.cuda.device_count()
 
-# Get the number of GPUs on the system
-if args.num_gpus == 0:
-    num_gpus = torch.cuda.device_count()
-else:
-    num_gpus = args.num_gpus
+with open('config.yaml', 'r') as file:
+    machs = yaml.safe_load(file)
+
+if os.getenv("MACHINE_ID") is None:
+    raise ValueError(("You must specify the environment variable MACHINE_ID prior to running this script"))
+assert os.getenv("MACHINE_ID") in machs.keys()
 
 
+for machine_id in machs.keys():
+    machine_config = machs[machine_id]
+    for gpu_index, gpu_config in enumerate(machine_config):
+        # Create a new wallet object for each GPU
+        wallet = bt.wallet(name=(gpu_config['wallet']), path="auto_wallets/",
+                           hotkey=str(gpu_config['keyfile']))
+        # Check if the wallet is registered
+        while not is_registered(wallet, network=gpu_config['network']):
 
-for gpu_index, gpu_config in enumerate(machine_config):
-    # Create a new wallet object for each GPU
-    wallet = bt.wallet(name=(gpu_config['wallet']), hotkey=str(gpu_config['keyfile']))
-    #wallet = bt.wallet(name="test", hotkey=str(i))
-    wallet.create()
+            range_string = " ".join(str(i) for i in range(num_gpus))  # not sorry ala
+            # Register the wallet using all GPUs.
+            command = (
+                f"btcli register "
+                f"--subtensor.network {gpu_config['network']} "
+                f"--wallet.name {wallet.name} "
+                f"--wallet.hotkey {wallet.hotkey_str} "
+                f"--wallet.path auto_wallets/ "
+                f"--cuda --cuda.dev_id {range_string} "
+                f"--cuda.TPB 512 "
+                f"--cuda update_interval 250_000 "
+                f"--no_prompt "
+            )
+            # command += "&& curl -H \"Content-Type: application/json\" -d '{\"content\": \"@here a new key is Registered!\"}' \"""
+            print(command)
+            subprocess.run(command, shell=True)
 
-    # Check if the wallet is registered
-    while not is_registered(wallet, network=gpu_config['network']):
-
-        range_string = " ".join(str(i) for i in range(num_gpus))  # not sorry ala
-        # Register the wallet using all GPUs.
-        command = (
-            f"btcli register "
-            f"--subtensor.network {gpu_config['network']} "
-            f"--wallet.name {wallet.name} "
-            f"--wallet.hotkey {wallet.hotkey_str} "
-            f"--cuda --cuda.dev_id {range_string} "
-            f"--cuda.TPB 512 "
-            f"--cuda update_interval 250_000 "
-            f"--no_prompt "
-        )      
-        #command += "&& curl -H \"Content-Type: application/json\" -d '{\"content\": \"@here a new key is Registered!\"}' \"""
-        print(command)
-        subprocess.run(command, shell=True)
-
-    deploy_core_server(gpu_index, gpu_config, wallet)
-    sleep(10)
+        if machine_id == os.getenv("MACHINE_ID"):
+            deploy_core_server(gpu_index, gpu_config, wallet)
+        sleep(10)
