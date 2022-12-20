@@ -44,7 +44,7 @@ def deploy_core_server(
             f"--logging.debug "
             f"--subtensor.network {gpu_config['network']} "
             f"--neuron.device cuda:{gpu_index} "
-            f"--neuron.model_name{gpu_config['model']} "
+            f"--neuron.model_name {gpu_config['model']} "
             f"--axon.port {gpu_config['port']} "
             f"--wallet.name test "
             f"--wallet.hotkey {wallet.hotkey_str}"
