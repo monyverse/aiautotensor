@@ -2,108 +2,114 @@
 machine1:
   -
     name: "a"
-    #model: "gpt2"
-    #port: 8091
+    model: "gpt2"
+    port: 8091
     keyfile: 0
     wallet: "test"
     network: nobunaga
   -
     name: "b"
-    #model: "gpt-neo-125M"
-    #port: 8093
+    model: "gpt-neo-125M"
+    port: 8093
     keyfile: 1
     wallet: "test"
     network: nobunaga
   -
     name: "c"
-    #model: "gpt-neo-125M"
-    #port: 8094
+    model: "gpt-neo-125M"
+    port: 8094
     keyfile: 2
     wallet: "test"
     network: nobunaga
   -
     name: "d"
-    #model: "gpt-neo-125M"
-    #port: 8095
+    model: "gpt-neo-125M"
+    port: 8095
     keyfile: 3
     wallet: "test"
     network: nobunaga
   -
     name: "e"
-    #model: "gpt-neo-125M"
-    #port: 8096
+    model: "gpt-neo-125M"
+    port: 8096
     keyfile: 4
     wallet: "test"
     network: nobunaga
   -
     name: "f"
-    #model: "gpt-neo-125M"
-    #port: 8097
+    model: "gpt-neo-125M"
+    port: 8097
     keyfile: 5
     wallet: "test"
     network: nobunaga
   -
     name: "g"
-    #model: "gpt-neo-125M"
-    #port: 8098
+    model: "gpt-neo-125M"
+    port: 8098
     keyfile: 6
     wallet: "test"
     network: nobunaga
   -
     name: "h"
-    #model: "gpt-neo-125M"
-    #port: 8099
+    model: "gpt-neo-125M"
+    port: 8099
     keyfile: 7
     wallet: "test"
     network: nobunaga
 machine2:
   -
     name: "i"
-    #model: "gpt2"
-    #port: 8100
+    model: "gpt2"
+    port: 8100
     keyfile: 8
     wallet: "test"
     network: nobunaga
   -
     name: "j"
-    #model: "gpt-neo-125M"
-    #port: 8101
+    model: "gpt-neo-125M"
+    port: 8101
     keyfile: 9
     wallet: "test"
   -
     name: "k"
-    #model: "gpt-neo-125M"
-    #port: 8102
+    model: "gpt-neo-125M"
+    port: 8102
     keyfile: 10
     wallet: "test"
   -
     name: "l"
-    #model: "gpt-neo-125M"
-    #port: 8103
+    model: "gpt-neo-125M"
+    port: 8103
     keyfile: 11
     wallet: "test"
+    network: nobunaga
   -
     name: "m"
-    #model: "gpt-neo-125M"
-    #port: 8104
+    model: "gpt-neo-125M"
+    port: 8104
     keyfile: 12
     wallet: "test"
+    network: nobunaga
   -
     name: "n"
-    #model: "gpt-neo-125M"
-    #port: 8105
+    model: "gpt-neo-125M"
+    port: 8105
     keyfile: 13
     wallet: "test"
+    network: nobunaga
   -
     name: "o"
-    #model: "gpt-neo-125M"
-    #port: 8106
+    model: "gpt-neo-125M"
+    port: 8106
     keyfile: 14
     wallet: "test"
+    network: nobunaga
   -
     name: "p"
-    #model: "gpt-neo-125M"
-    #port: 8107
+    model: "gpt-neo-125M"
+    port: 8107
     keyfile: 15
     wallet: "test"
+    network: nobunaga
+
 
