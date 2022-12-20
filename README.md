@@ -139,9 +139,11 @@ Step 5:
 
 Step 6: 
 
-	Run auto miner:
+	Run auto miner (once per machine. Be sure to set the ENVAR:
 
   		```
-		python3 autominer.py
+		python3 autominer.py==MACHINE_ID<>
+		python3 autominer.py==MACHINE_ID<>
+		etc...
 		```
   
