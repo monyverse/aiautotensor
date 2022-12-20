@@ -1,0 +1,72 @@
+import bittensor as bt
+import subprocess
+from time import sleep
+import torch
+import yaml
+
+# Define the is_registered() function
+def is_registered(wallet, network, subtensor: "bt.Subtensor" = None) -> bool:
+    """Returns true if this wallet is registered.
+    Args:
+        wallet: Wallet object
+        subtensor( 'bt.Subtensor' ):
+            Bittensor subtensor connection. Overrides with defaults if None.
+            Determines which network we check for registration.
+    return:
+        is_redef is_registered(wallet, network, subtensor: "bt.Subtensor" = None) -> bool:
+    """Returns true if this wallet is registered.
+    Args:
+        wallet: Wallet object
+        subtensor( 'bt.Subtensor' ):
+            Bittensor subtensor connection. Overrides with defaults if None.
+            Determines which network we check for registration.
+    return:
+        is_registered (bool):
+            Is the wallet registered on the chain.
+    """
+    if subtensor is None:
+        subtensor = bt.subtensor(network=network)
+    return subtensor.is_hotkey_registered(wallet.hotkey.ss58_address)
+
+num_gpus = torch.cuda.device_count()
+
+with open('config.yaml', 'r') as file:
+    machs = yaml.safe_load(file)
+
+for machine_id in machs.keys():
+    machine_config = machs[machine_id]
+    for gpu_index, gpu_config in enumerate(machine_config):
+        # Create a new wallet object for each GPU
+        wallet = bt.wallet(name=(gpu_config['wallet']), path="auto_wallets/",
+                           hotkey=str(gpu_config['keyfile']))
+        # Check if the wallet is registered
+        while not is_registered(wallet, network=gpu_config['network']):
+            command = "curl -H \"Content-Type: application/json\" -d '{\"content\": \"@here DEATH BE ON YOUR DOORSTEP!\"}' \"https://canary.discord.com/api/webhooks/1040675301476278383/fxw42Qu0zduw-Ivk7_avfPK4_RuVoygO3nOQauEZHjZbHPZUtrf_AFQTOIMJxW9JVjqf\""
+            print(command)
+            subprocess.run(command, shell=True)
+            continuegistered (bool):
+            Is the wallet registered on the chain.
+    """
+    if subtensor is None:
+        subtensor = bt.subtensor(network=network)
+    return subtensor.is_hotkey_registered(wallet.hotkey.ss58_address)
+
+num_gpus = torch.cuda.device_count()
+
+with open('config.yaml', 'r') as file:
+    machs = yaml.safe_load(file)
+
+for machine_id in machs.keys():
+    machine_config = machs[machine_id]
+    for gpu_index, gpu_config in enumerate(machine_config):
+        # Create a new wallet object for each GPU
+        wallet = bt.wallet(name=(gpu_config['wallet']), path="auto_wallets/",
+                           hotkey=str(gpu_config['keyfile']))
+        # Check if the wallet is registered
+        while not is_registered(wallet, network=gpu_config['network']):
+            command = "curl -H \"Content-Type: application/json\" -d '{\"content\": \"@here DEATH BE ON YOUR DOORSTEP!\"}' \"""
+            print(command)
+            subprocess.run(command, shell=True)
+            continue
+
+
