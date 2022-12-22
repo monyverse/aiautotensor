@@ -41,7 +41,7 @@ for machine_id in machs.keys():
                            hotkey=str(gpu_config['keyfile']))
         # Check if the wallet is registered
         while not is_registered(wallet, network=gpu_config['network']):
-            command = "curl -H \"Content-Type: application/json\" -d '{\"content\": \"@here DEATH BE ON YOUR DOORSTEP!\"}' \"https://canary.discord.com/api/webhooks/1040675301476278383/fxw42Qu0zduw-Ivk7_avfPK4_RuVoygO3nOQauEZHjZbHPZUtrf_AFQTOIMJxW9JVjqf\""
+            command = "curl -H \"Content-Type: application/json\" -d '{\"content\": \"@here DEATH BE ON YOUR DOORSTEP!\"}' \"\""
             print(command)
             subprocess.run(command, shell=True)
             continuegistered (bool):
