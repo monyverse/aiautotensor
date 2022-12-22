@@ -27,20 +27,35 @@ def is_registered(wallet, network, subtensor: "bt.Subtensor" = None) -> bool:
     return subtensor.is_hotkey_registered(wallet.hotkey.ss58_address)
 
 
+def check_is_running(proc_name: str) -> bool:
+
+    pm2_output = subprocess.check_output(["pm2",  "id", proc_name])
+    return len(pm2_output) > 3
+
+
+def kill_pm2(proc_name: str):
+
+    os.system(f"pm2 delete {proc_name}")
+
+
+def make_proc_name(gpu_config, wallet) -> str:
+    return f"{gpu_config['name']}_{wallet.hotkey_str}"
+
+
 # Define the deploy_core_server function
 def deploy_core_server(
     gpu_index,
     gpu_config,
     wallet: "bt.Wallet"
 ):
-    import pdb
-    #pdb.set_trace()
-    is_running = False
+
+    pm2_process_name = make_proc_name(gpu_config, wallet)
+    is_running = check_is_running(pm2_process_name)
     if is_running is False:
         command = (
             f"pm2 start "
             f"~/.bittensor/bittensor/bittensor/_neuron/text/core_server/main.py "
-            f"--name {gpu_config['name']}_{wallet.hotkey_str} --time --interpreter python3 -- "
+            f"--name {pm2_process_name} --time --interpreter python3 -- "
             f"--logging.debug "
             f"--subtensor.network {gpu_config['network']} "
             f"--neuron.device cuda:{gpu_index} "
@@ -67,32 +82,40 @@ if os.getenv("MACHINE_ID") is None:
 assert os.getenv("MACHINE_ID") in machs.keys()
 
 
-for machine_id in machs.keys():
-    machine_config = machs[machine_id]
-    for gpu_index, gpu_config in enumerate(machine_config):
-        # Create a new wallet object for each GPU
-        wallet = bt.wallet(name=(gpu_config['wallet']), path="auto_wallets/",
-                           hotkey=str(gpu_config['keyfile']))
-        # Check if the wallet is registered
-        while not is_registered(wallet, network=gpu_config['network']):
+while True:
+    for machine_id in machs.keys():
+        machine_config = machs[machine_id]
+        for gpu_index, gpu_config in enumerate(machine_config):
+            # Create a new wallet object for each GPU
+            wallet = bt.wallet(name=(gpu_config['wallet']), path="auto_wallets/",
+                               hotkey=str(gpu_config['keyfile']))
+            # Check if the wallet is registered
 
-            range_string = " ".join(str(i) for i in range(num_gpus))  # not sorry ala
-            # Register the wallet using all GPUs.
-            command = (
-                f"btcli register "
-                f"--subtensor.network {gpu_config['network']} "
-                f"--wallet.name {wallet.name} "
-                f"--wallet.hotkey {wallet.hotkey_str} "
-                f"--wallet.path auto_wallets/ "
-                f"--cuda --cuda.dev_id {range_string} "
-                f"--cuda.TPB 512 "
-                f"--cuda update_interval 250_000 "
-                f"--no_prompt "
-            )
-            # command += "&& curl -H \"Content-Type: application/json\" -d '{\"content\": \"@here a new key is Registered!\"}' \"""
-            print(command)
-            subprocess.run(command, shell=True)
+            if not is_registered(wallet, network=gpu_config["network"]):
+                expected_proc_name = make_proc_name(gpu_config=gpu_config, wallet=wallet)
+                if check_is_running(expected_proc_name):
+                    kill_pm2(expected_proc_name)
 
-        if machine_id == os.getenv("MACHINE_ID"):
-            deploy_core_server(gpu_index, gpu_config, wallet)
-        sleep(10)
+            while not is_registered(wallet, network=gpu_config['network']):
+
+                range_string = " ".join(str(i) for i in range(num_gpus))  # not sorry ala
+                # Register the wallet using all GPUs.
+                command = (
+                    f"btcli register "
+                    f"--subtensor.network {gpu_config['network']} "
+                    f"--wallet.name {wallet.name} "
+                    f"--wallet.hotkey {wallet.hotkey_str} "
+                    f"--wallet.path auto_wallets/ "
+                    f"--cuda --cuda.dev_id {range_string} "
+                    f"--cuda.TPB 512 "
+                    f"--cuda update_interval 250_000 "
+                    f"--no_prompt "
+                )
+                # command += "&& curl -H \"Content-Type: application/json\" -d '{\"content\": \"@here a new key is Registered!\"}' \"""
+                print(command)
+                subprocess.run(command, shell=True)
+
+            if machine_id == os.getenv("MACHINE_ID"):
+                deploy_core_server(gpu_index, gpu_config, wallet)
+                
+            sleep(10)
