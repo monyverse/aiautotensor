@@ -146,10 +146,4 @@ Step 6:
 		MACHINE_ID=machine2 python3 auto.py
 		etc...
 		```
-Step 7:
-	Open another tmux window:
-	```
-	tmux
-	```
-	Run subtensor monitor to check key registration status
   
