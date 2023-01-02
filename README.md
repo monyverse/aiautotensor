@@ -37,9 +37,8 @@ Step 2:
 
 	Open the directory:
 
-		```
-		cd ~/.autominer
-		```
+		cd autominer
+		
 
 Step 2: 
 
@@ -112,7 +111,6 @@ Step 2:
 Step 3: 
 
 	Copy keys to each machine:
-
 		
 		scp -r autominer <user>
 		
@@ -132,7 +130,6 @@ Step 4:
 Step 5:
 
 	Open TMUX:
-
 		
 		tmux
 		
