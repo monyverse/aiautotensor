@@ -47,7 +47,7 @@ Step 2:
 
 	Each “-” represents a GPU
 
-		```
+		
 		machine1:
 		  -
 		    name: "a"
@@ -98,52 +98,52 @@ Step 2:
 		    port: 8099
 		    keyfile: 7
 		    wallet: "test"
-		```
+		
 
 		The configuration above represent mining architecture for two machine each with 4 GPUs.
 
 Step 2:
 
 	Create Keys:
-		```
+		
 		python3 create_keys.py
-		```
+		
 
 Step 3: 
 
 	Copy keys to each machine:
 
-		```
+		
 		scp -r autominer <user>
-		```
+		
 
 Step 4:
 
 	Install PM2 & TMUX:
 
-		```
+		
 		sudo apt update
 		sudo apt upgrade
 		sudo apt install npm -y
 		sudo npm install pm2@latest -g
 		sudo apt install tmux
-		```
+		
 
 Step 5:
 
 	Open TMUX:
 
-		```
+		
 		tmux
-		```
+		
 
 Step 6: 
 
 	Run auto miner (once per machine. Be sure to set the ENVAR:
 
-  		```
+  		
 		MACHINE_ID=machine1 python3 auto.py
 		MACHINE_ID=machine2 python3 auto.py
 		etc...
-		```
+		
   
