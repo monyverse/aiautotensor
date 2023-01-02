@@ -45,8 +45,7 @@ Step 2:
 	Configure the yaml:
 
 	Each “-” represents a GPU
-
-		
+	
 		machine1:
 		  -
 		    name: "a"
@@ -118,7 +117,6 @@ Step 3:
 Step 4:
 
 	Install PM2 & TMUX:
-
 		
 		sudo apt update
 		sudo apt upgrade
@@ -138,7 +136,6 @@ Step 6:
 
 	Run auto miner (once per machine. Be sure to set the ENVAR:
 
-  		
 		MACHINE_ID=machine1 python3 auto.py
 		MACHINE_ID=machine2 python3 auto.py
 		etc...
