@@ -95,6 +95,9 @@ while True:
                 expected_proc_name = make_proc_name(gpu_config=gpu_config, wallet=wallet)
                 if check_is_running(expected_proc_name):
                     kill_pm2(expected_proc_name)
+                    command += "&& curl -H \"Content-Type: application/json\" -d '{\"content\": \"@here you lost a hotkey! :(\"}' \"""
+                    print(command)
+                    subprocess.run(command, shell=True)
 
             while not is_registered(wallet, network=gpu_config['network']):
 
@@ -111,7 +114,7 @@ while True:
                     f"--cuda update_interval 250_000 "
                     f"--no_prompt "
                 )
-                # command += "&& curl -H \"Content-Type: application/json\" -d '{\"content\": \"@here a new key is Registered!\"}' \"""
+                # command += "&& curl -H \"Content-Type: application/json\" -d '{\"content\": \"@here a new key is Registered! :)\"}' \"""
                 print(command)
                 subprocess.run(command, shell=True)
 
