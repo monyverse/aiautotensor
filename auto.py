@@ -28,7 +28,7 @@ def is_registered(wallet, network, subtensor: "bt.Subtensor" = None) -> bool:
 
 def check_trust_score(#pass appropriate variables)
     #query subtensor
-    #
+    #only querey hotkeys born after 10.72 hours
 
 def check_is_running(proc_name: str) -> bool:
 
