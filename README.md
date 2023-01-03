@@ -7,25 +7,25 @@ Recommended to setup a ssh config. This will make transferring keys and file eas
 	cd ~/.ssh
 
 
-	vim config
+		vim config
 	
 
 	
-	Host <>
-		HostName <IP>
-		Port <>
-		User <>
+			Host <>
+				HostName <IP>
+				Port <>
+				User <>
 
-	Host <>
-		HostName <IP>
-		Port <>
-		User <>
+			Host <>
+				HostName <IP>
+				Port <>
+				User <>
 
-	Host <>
-		HostName <IP>
-		Port <>
-		User <>
-	
+			Host <>
+				HostName <IP>
+				Port <>
+				User <>
+
 
 Step 1:
 
