@@ -26,6 +26,9 @@ def is_registered(wallet, network, subtensor: "bt.Subtensor" = None) -> bool:
         subtensor = bt.subtensor(network=network)
     return subtensor.is_hotkey_registered(wallet.hotkey.ss58_address)
 
+def check_trust_score(#pass appropriate variables)
+    #query subtensor
+    #
 
 def check_is_running(proc_name: str) -> bool:
 
@@ -61,7 +64,7 @@ def deploy_core_server(
             f"--neuron.device cuda:{gpu_index} "
             f"--neuron.model_name {gpu_config['model']} "
             f"--axon.port {gpu_config['port']} "
-            f"--wallet.name test "
+            f"--wallet.name {gpu_config['wallet']} "
             f"--wallet.hotkey {wallet.hotkey_str}"
         )
         # Run the command in the command line
