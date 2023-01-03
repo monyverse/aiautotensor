@@ -31,7 +31,7 @@ Host <>
 
 Step 1:
 
-git clone [https://github.com/quac88/autominer/tree/main](https://github.com/quac88/autominer/tree/main)
+	git clone [https://github.com/quac88/autominer/tree/main](https://github.com/quac88/autominer/tree/main)
 
 Step 2:
 
