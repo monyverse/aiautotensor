@@ -1,33 +1,31 @@
 # autominer
 automated bittensor mining
 
-Recommended:
+Recommended to setup a ssh config. This will make transferring keys and file easier later on:
 
-Setup am ssh config:
 
-```
-cd ~/.ssh
-```
-```
-vim config
-```
+	cd ~/.ssh
 
-```
-Host <>
-	HostName <IP>
-	Port <>
-	User <>
 
-Host <>
-	HostName <IP>
-	Port <>
-	User <>
+	vim config
+	
 
-Host <>
-	HostName <IP>
-	Port <>
-	User <>
-```
+	
+	Host <>
+		HostName <IP>
+		Port <>
+		User <>
+
+	Host <>
+		HostName <IP>
+		Port <>
+		User <>
+
+	Host <>
+		HostName <IP>
+		Port <>
+		User <>
+	
 
 Step 1:
 
