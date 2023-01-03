@@ -96,7 +96,7 @@ Step 2:
 		    wallet: "test"
 		
 
-		The configuration above represent mining architecture for two machine each with 4 GPUs.
+The configuration above represent mining architecture for two machine each with 4 GPUs.
 
 Step 2:
 
