@@ -26,9 +26,6 @@ def is_registered(wallet, network, subtensor: "bt.Subtensor" = None) -> bool:
         subtensor = bt.subtensor(network=network)
     return subtensor.is_hotkey_registered(wallet.hotkey.ss58_address)
 
-def check_trust_score(#pass appropriate variables)
-    #query subtensor
-    #only querey hotkeys born after 10.72 hours
 
 def check_is_running(proc_name: str) -> bool:
 
@@ -93,7 +90,6 @@ while True:
             wallet = bt.wallet(name=(gpu_config['wallet']), path="auto_wallets/",
                                hotkey=str(gpu_config['keyfile']))
             # Check if the wallet is registered
-
             if not is_registered(wallet, network=gpu_config["network"]):
                 expected_proc_name = make_proc_name(gpu_config=gpu_config, wallet=wallet)
                 if check_is_running(expected_proc_name):
@@ -101,6 +97,7 @@ while True:
                     command += "curl -H \"Content-Type: application/json\" -d '{\"content\": \"@here you lost a hotkey! :(\"}' \"""
                     print(command)
                     subprocess.run(command, shell=True)
+                sleep(10)
 
             while not is_registered(wallet, network=gpu_config['network']):
 
