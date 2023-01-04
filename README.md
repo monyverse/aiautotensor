@@ -139,7 +139,7 @@ Step 6:
 		etc...
 Step 7: 
 	
-	Turn on the trust monitor (this feature is still experimental) 
+Turn on the trust monitor (this feature is still experimental) 
 		
 		python3 trust_monitor.py
 		
