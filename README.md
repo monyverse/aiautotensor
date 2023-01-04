@@ -137,5 +137,9 @@ Step 6:
 		MACHINE_ID=machine1 python3 auto.py
 		MACHINE_ID=machine2 python3 auto.py
 		etc...
+Step 7: 
+	Turn on the trust monitor (this feature is still experimental) 
+		
+		python3 trust_monitor.py
 		
   
