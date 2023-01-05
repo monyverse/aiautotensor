@@ -173,10 +173,10 @@ Turn on the trust monitor (this feature is still experimental)
                                  b) yes
                                  If yes, which endpoint would you like to use?			 
 2. Prompt user for their disocrd API key:
-                                          # What is your discord API key:				  
-# 3. Do not monitor keys outside the ImmunityPeriod.
-# 4. Prompt the user for a TRUST_SCORE_THRESHOLD (defaults to .5)
-# 5. If a key returns a trust score less than the TRUST_SCORE_THRESHOLD, do not ping the user for another 5-20 minutes. - This is somewhat working already
+                                        What is your discord API key:				  
+3. Do not monitor keys outside the ImmunityPeriod.
+4. Prompt the user for a TRUST_SCORE_THRESHOLD (defaults to .5)
+5. If a key returns a trust score less than the TRUST_SCORE_THRESHOLD, do not ping the user for another 5-20 minutes. - This is somewhat working already
 
 
 
