@@ -8,8 +8,15 @@ import yaml
 from rich.prompt import Confirm, Prompt, PromptBase
 
 
-MACHINE_ID = Prompt.ask("Which machine id is this?", choices=["machine1", "machine2", "machine3", "machi..."])
-NOTIF = Prompt.ask("Would you like to turn on discord notifications?", choices=["yes", "no"], default="yes")
+MACHINE_ID = Prompt.ask(
+    "Which machine id is this?",
+    choices=["machine1", "machine2", "machine3", "machi..."],
+)
+NOTIF = Prompt.ask(
+    "Would you like to turn on discord notifications?",
+    choices=["yes", "no"],
+    default="yes",
+)
 if NOTIF == "yes":
     API_KEY = Prompt.ask("Enter your discord api key", default="")
 
@@ -32,7 +39,7 @@ def is_registered(wallet, network, subtensor: "bt.Subtensor" = None) -> bool:
 
 
 def check_is_running(proc_name: str) -> bool:
-    pm2_output = subprocess.check_output(["pm2",  "id", proc_name])
+    pm2_output = subprocess.check_output(["pm2", "id", proc_name])
     return len(pm2_output) > 3
 
 
@@ -45,11 +52,7 @@ def make_proc_name(gpu_config, wallet) -> str:
 
 
 # Define the deploy_core_server function
-def deploy_core_server(
-    gpu_index,
-    gpu_config,
-    wallet: "bt.Wallet"
-):
+def deploy_core_server(gpu_index, gpu_config, wallet: "bt.Wallet"):
 
     pm2_process_name = make_proc_name(gpu_config, wallet)
     is_running = check_is_running(pm2_process_name)
@@ -76,11 +79,15 @@ def deploy_core_server(
 
 num_gpus = torch.cuda.device_count()
 
-with open('config.yaml', 'r') as file:
+with open("config.yaml", "r") as file:
     machs = yaml.safe_load(file)
 
 if os.getenv("MACHINE_ID") is None:
-    raise ValueError(("You must specify the environment variable MACHINE_ID prior to running this script"))
+    raise ValueError(
+        (
+            "You must specify the environment variable MACHINE_ID prior to running this script"
+        )
+    )
 assert os.getenv("MACHINE_ID") in machs.keys()
 
 
@@ -89,21 +96,28 @@ while True:
         machine_config = machs[machine_id]
         for gpu_index, gpu_config in enumerate(machine_config):
             # Create a new wallet object for each GPU
-            wallet = bt.wallet(name=(gpu_config['wallet']), path="auto_wallets/",
-                               hotkey=str(gpu_config['keyfile']))
+            wallet = bt.wallet(
+                name=(gpu_config["wallet"]),
+                path="auto_wallets/",
+                hotkey=str(gpu_config["keyfile"]),
+            )
             # Check if the wallet is registered
-            if not is_registered(wallet, network=gpu_config["network"]): # --> THIS NEEDS TO BE AN ENVAR
-                expected_proc_name = make_proc_name(gpu_config=gpu_config, wallet=wallet)
+            if not is_registered(
+                wallet, network=gpu_config["network"]
+            ):  # --> THIS NEEDS TO BE AN ENVAR
+                expected_proc_name = make_proc_name(
+                    gpu_config=gpu_config, wallet=wallet
+                )
                 if check_is_running(expected_proc_name):
                     kill_pm2(expected_proc_name)
                     if NOTIF == "yes":
-                        command = f"curl -H \"Content-Type: application/json\" -d '{{\"content\": \"@here The {wallet.hotkey_str} key on {machine_id} has been deregistered!\"}}' \"{API_KEY}\""
+                        command = f'curl -H "Content-Type: application/json" -d \'{{"content": "@here The {wallet.hotkey_str} key on {machine_id} has been deregistered!"}}\' "{API_KEY}"'
                         print(command)
                         subprocess.run(command, shell=True)
                     sleep(10)
                 sleep(10)
 
-            while not is_registered(wallet, network=gpu_config['network']):
+            while not is_registered(wallet, network=gpu_config["network"]):
 
                 range_string = " ".join(str(i) for i in range(num_gpus))
                 # Register the wallet using all GPUs. --> HOW TO SET TO HALF OR QUARTER TPB IF GPU IS ALREADY SERVING OR TURN REGISTRATION OFF. --> make this an ENVAR
@@ -120,11 +134,11 @@ while True:
                     f"--no_prompt "
                 )
                 if NOTIF == "yes" and MACHINE_ID == "machine1":
-                    command = f"curl -H \"Content-Type: application/json\" -d '{{\"content\": \"@here The {wallet.hotkey_str} key on {machine_id} has been registered!\"}}' \"{API_KEY}\""
+                    command = f'curl -H "Content-Type: application/json" -d \'{{"content": "@here The {wallet.hotkey_str} key on {machine_id} has been registered!"}}\' "{API_KEY}"'
                     print(command)
                     subprocess.run(command, shell=True)
 
             if machine_id == os.getenv("MACHINE_ID"):
                 deploy_core_server(gpu_index, gpu_config, wallet)
-                
+
             sleep(10)
