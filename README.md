@@ -153,7 +153,7 @@ Turn on the trust monitor (this feature is still experimental)
                                             a) set TPB to 256 is a card is already serving a hotkey?
                                             b) set TPB to 128 is a card is already serving a hotkey?
                                             c) set TPB to 128 is a card is already serving a hotkey?
-                                            d) yurn registration off for all cards already serving a hotkey?	
+                                            d) turn registration off for all cards already serving a hotkey?	
 				       ```
 2. Prompt user for discord API key for notifications.
 						    ```
