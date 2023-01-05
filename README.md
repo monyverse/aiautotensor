@@ -1,7 +1,7 @@
 # autominer
 automated bittensor mining
 
-Recommended to setup a ssh config. This will make transferring keys and file easier later on:
+Recommended to setup a ssh config. This will make transferring keys and files easier later on:
 
 ```
 cd ~/.ssh
