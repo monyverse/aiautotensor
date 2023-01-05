@@ -33,7 +33,7 @@ Step 1:
 
 Step 2:
 
-	Open the directory:
+Open the directory:
 
 		cd autominer
 		
@@ -100,21 +100,21 @@ The configuration above represent mining architecture for two machine each with 
 
 Step 2:
 
-	Create Keys:
+Create Keys:
 		
 		python3 create_keys.py
 		
 
 Step 3: 
 
-	Copy keys to each machine:
+Copy keys to each machine:
 		
 		scp -r autominer <user>
 		
 
 Step 4:
 
-	Install PM2 & TMUX:
+Install PM2 & TMUX:
 		
 		sudo apt update
 		sudo apt upgrade
@@ -125,24 +125,21 @@ Step 4:
 
 Step 5:
 
-	Open TMUX:
+Open TMUX:
 		
 		tmux
 		
 
 Step 6: 
 
-	Run auto miner (once per machine. Be sure to set the ENVAR:
+Run auto miner and follow the prompts (once per machine). 
 
 		python3 auto.py
 
-Step 7:
-
-	Follow prompts
 	
-Step 8: 
+Step 7: 
 	
-Turn on the trust monitor and follow prompts (this feature is still experimental) 
+Turn on the trust monitor and follow the prompts (this feature is still experimental) 
 		
 		python3 trust_monitor.py
 		
