@@ -155,35 +155,12 @@ Turn on the trust monitor (this feature is still experimental)
                                             c) set TPB to 128 is a card is already serving a hotkey?
                                             d) turn registration off for all cards already serving a hotkey?	
 				       ```
-2. Prompt user for discord API key for notifications.
-						    ```
-                                        	    Ex: Would you like to turn on notifcations for your discord server?
-                                                         a) yes
-                                                         b) no
-                                                         If yes, what is your API key:
-					            ```
+
 							 
 							 
 **ROADMAP trust_monitor.py:**
 *Features currently in production:*
-1. Prompt user for a network.
-                            ```
-                            Ex: What network would you like to use:
-                                 a) nobunaga
-                                 b) nakamoto
-                                 c) local
-                                 If C, would you like to use a specific endpoint
-                                 a) no
-                                 b) yes
-                                 If yes, which endpoint would you like to use?	
-			    ```
-2. Prompt user for their disocrd API key:
-				        ```
-                                        What is your discord API key:	
-					```
-3. Do not monitor keys outside the ImmunityPeriod.
-4. Prompt the user for a TRUST_SCORE_THRESHOLD (defaults to .5)
-5. If a key returns a trust score less than the TRUST_SCORE_THRESHOLD, do not ping the user for another 5-20 minutes. - This is somewhat working already
+1. Do not monitor keys outside the ImmunityPeriod.
 
 
 
