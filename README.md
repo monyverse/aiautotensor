@@ -134,12 +134,15 @@ Step 6:
 
 	Run auto miner (once per machine. Be sure to set the ENVAR:
 
-		MACHINE_ID=machine1 python3 auto.py
-		MACHINE_ID=machine2 python3 auto.py
-		etc...
-Step 7: 
+		python3 auto.py
+
+Step 7:
+
+	Follow prompts
 	
-Turn on the trust monitor (this feature is still experimental) 
+Step 8: 
+	
+Turn on the trust monitor and follow prompts (this feature is still experimental) 
 		
 		python3 trust_monitor.py
 		
