@@ -8,9 +8,8 @@ import yaml
 from rich.prompt import Confirm, Prompt, PromptBase
 
 
-MACHINE_ID = Prompt.ask(
+machine_id = Prompt.ask(
     "Which machine id is this?",
-    choices=["machine1", "machine2", "machine3", "machi..."],
 )
 NOTIF = Prompt.ask(
     "Would you like to turn on discord notifications?",
@@ -83,11 +82,7 @@ with open("config.yaml", "r") as file:
     machs = yaml.safe_load(file)
 
 if os.getenv("MACHINE_ID") is None:
-    raise ValueError(
-        (
-            "You must specify the environment variable MACHINE_ID prior to running this script"
-        )
-    )
+    os.environ["MACHINE_ID"] = machine_id
 assert os.getenv("MACHINE_ID") in machs.keys()
 
 
@@ -121,20 +116,33 @@ while True:
 
                 range_string = " ".join(str(i) for i in range(num_gpus))
                 # Register the wallet using all GPUs. --> HOW TO SET TO HALF OR QUARTER TPB IF GPU IS ALREADY SERVING OR TURN REGISTRATION OFF. --> make this an ENVAR
-                command = (
-                    f"btcli register "
-                    f"--subtensor.network {gpu_config['network']} "
-                    f"--subtensor.chain_endpoint {gpu_config['endpoint']}"
-                    f"--wallet.name {wallet.name} "
-                    f"--wallet.hotkey {wallet.hotkey_str} "
-                    f"--wallet.path auto_wallets/ "
-                    f"--cuda --cuda.dev_id {range_string} "
-                    f"--cuda.TPB 512 "
-                    f"--cuda update_interval 250_000 "
-                    f"--no_prompt "
-                )
-                if NOTIF == "yes" and MACHINE_ID == "machine1":
-                    command = f'curl -H "Content-Type: application/json" -d \'{{"content": "@here The {wallet.hotkey_str} key on {machine_id} has been registered!"}}\' "{API_KEY}"'
+                if NOTIF == "yes" and machine_id == "machine1":
+                    command = (
+                        f"btcli register "
+                        f"--subtensor.network {gpu_config['network']} "
+                        f"--wallet.name {wallet.name} "
+                        f"--wallet.hotkey {wallet.hotkey_str} "
+                        f"--wallet.path auto_wallets/ "
+                        f"--cuda --cuda.dev_id {range_string} "
+                        f"--cuda.TPB 512 "
+                        f"--cuda update_interval 250_000 "
+                        f"--no_prompt "
+                    )
+                    command += f'&& curl -H "Content-Type: application/json" -d \'{{"content": "The {wallet.hotkey_str} key on {machine_id} has been registered!"}}\' "{API_KEY}"'
+                    print(command)
+                    subprocess.run(command, shell=True)
+                else:
+                    command = (
+                        f"btcli register "
+                        f"--subtensor.network {gpu_config['network']} "
+                        f"--wallet.name {wallet.name} "
+                        f"--wallet.hotkey {wallet.hotkey_str} "
+                        f"--wallet.path auto_wallets/ "
+                        f"--cuda --cuda.dev_id {range_string} "
+                        f"--cuda.TPB 512 "
+                        f"--cuda update_interval 250_000 "
+                        f"--no_prompt "
+                    )
                     print(command)
                     subprocess.run(command, shell=True)
 
