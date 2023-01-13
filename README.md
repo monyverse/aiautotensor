@@ -155,7 +155,7 @@ Turn on the trust monitor and follow the prompts (this feature is still experime
                                             c) set TPB to 128 is a card is already serving a hotkey?
                                             d) turn registration off for all cards already serving a hotkey?	
 				       ```
-2. Log registerred keys at their block creation into a yaml for the trust monitor.
+2. Log registered keys at their block creation into a yaml for the trust monitor.
 
 							 
 							 
