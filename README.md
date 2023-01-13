@@ -155,12 +155,14 @@ Turn on the trust monitor and follow the prompts (this feature is still experime
                                             c) set TPB to 128 is a card is already serving a hotkey?
                                             d) turn registration off for all cards already serving a hotkey?	
 				       ```
+2. Log registerred keys at their block creation into a yaml for the trust monitor.
 
 							 
 							 
 **ROADMAP trust_monitor.py:**
 *Features currently in production:*
-1. Do not monitor keys outside the ImmunityPeriod.
+1. Monitor keys in the yaml after the ImmunityPeriod is over. 
+2. Update the yaml if a key is derregged.
 
 
 
