@@ -120,7 +120,7 @@ while True:
                     f"--cuda "
                     f"--cuda.dev_id {cuda_devs} "
                     f"--cuda.TPB {tpb} "
-                    f"--cuda update_interval 250_000 "
+                    f"--cuda update_interval 70_000 "
                     f"--no_prompt "
                 )
 
