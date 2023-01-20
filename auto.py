@@ -5,6 +5,7 @@ import bittensor as bt
 import torch
 import yaml
 from rich.prompt import Confirm, Prompt, PromptBase
+import nvidia_smi
 
 
 MACHINE = Prompt.ask(
@@ -35,6 +36,13 @@ def is_registered(wallet, network, subtensor: "bt.Subtensor" = None) -> bool:
     if subtensor is None:
         subtensor = bt.subtensor(network=network)
     return subtensor.is_hotkey_registered(wallet.hotkey.ss58_address)
+
+
+def gpu_is_used(i):
+    handle = nvidia_smi.nvmlDeviceGetHandleByIndex(i)
+    info = nvidia_smi.nvmlDeviceGetMemoryInfo(handle)
+
+    return (info.used/info.total) > 0.03
 
 
 def check_is_running(proc_name: str) -> bool:
@@ -127,29 +135,22 @@ while True:
                 return command
 
             while not is_registered(wallet, network=gpu_config["network"]):
-                # Register the wallet using all GPUs. --> HOW TO SET TO HALF OR QUARTER TPB IF GPU IS ALREADY SERVING OR TURN REGISTRATION OFF. --> make this an ENVAR
-                #sleep(30)
-                #inactive_gpus = " ".join(str(i) for i in range(num_gpus))
-                #active_gpus = ""
+                sleep(30)
 
                 nvidia_smi.nvmlInit()
-                handle = nvidia_smi.nvmlDeviceGetHandleByIndex(i)
-                info = nvidia_smi.nvmlDeviceGetMemoryInfo(handle)
-
-                return (info.used/info.total) > 0.10
-            
                 deviceCount = nvidia_smi.nvmlDeviceGetCount()
+
                 used_gpus = []
                 unused_gpus = []
                 for i in range(deviceCount):
-                    print(f"Checking gpu {i}")
                     if gpu_is_used(i):
                         used_gpus.append(str(i))
-                     else:
+                    else:
                         unused_gpus.append(str(i))
-                
-                command1 = make_command(unused_gpus, 512)
-                command2 = make_command(used_gpus, 128)
+                print("Used GPUs: ", " ".join(used_gpus))
+                print("Unused GPUs: ", " ".join(unused_gpus))
+                command1 = make_command(" ".join(unused_gpus), 512)
+                command2 = make_command(" ".join(used_gpus), 128)
                 print(command1)
                 print(command2)
                 proc1 = subprocess.Popen(command1.split())
