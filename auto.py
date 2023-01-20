@@ -132,10 +132,24 @@ while True:
                 #inactive_gpus = " ".join(str(i) for i in range(num_gpus))
                 #active_gpus = ""
 
-                inactive_gpus = "0 1 2 3"
-                active_gpus = "4 5 6"
-                command1 = make_command(inactive_gpus, 512)
-                command2 = make_command(active_gpus, 128)
+                nvidia_smi.nvmlInit()
+                handle = nvidia_smi.nvmlDeviceGetHandleByIndex(i)
+                info = nvidia_smi.nvmlDeviceGetMemoryInfo(handle)
+
+                return (info.used/info.total) > 0.10
+            
+                deviceCount = nvidia_smi.nvmlDeviceGetCount()
+                used_gpus = []
+                unused_gpus = []
+                for i in range(deviceCount):
+                    print(f"Checking gpu {i}")
+                    if gpu_is_used(i):
+                        used_gpus.append(str(i))
+                     else:
+                        unused_gpus.append(str(i))
+                
+                command1 = make_command(unused_gpus, 512)
+                command2 = make_command(used_gpus, 128)
                 print(command1)
                 print(command2)
                 proc1 = subprocess.Popen(command1.split())
