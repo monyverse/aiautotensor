@@ -10,14 +10,25 @@ import nvidia_smi
 
 MACHINE = Prompt.ask(
     "Which machine id is this?"
-)
+)    
 os.environ["MACHINE_ID"] = MACHINE
-NOTIF = Prompt.ask(
+NOTIF1 = Prompt.ask(
+    "Would you like to cut TPB for registration if a GPU is serving a model?",
+    choices=["yes", "no"],
+    default="yes",
+)
+if NOTIF1 == "yes",
+    TPB = Prompt.ask(
+        "What would you like the TPB to be for GPUs that are serving?",
+        choices=["0", "64", "128", "256"],
+        default="256",
+)   
+NOTIF2 = Prompt.ask(
     "Would you like to turn on discord notifications?",
     choices=["yes", "no"],
     default="yes",
 )
-if NOTIF == "yes":
+if NOTIF2 == "yes":
     API_KEY = Prompt.ask("Enter your discord api key", default="")
 
 
@@ -150,7 +161,7 @@ while True:
                 print("Used GPUs: ", " ".join(used_gpus))
                 print("Unused GPUs: ", " ".join(unused_gpus))
                 command1 = make_command(" ".join(unused_gpus), 512)
-                command2 = make_command(" ".join(used_gpus), 128)
+                command2 = make_command(" ".join(used_gpus), {TPB})
                 print(command1)
                 print(command2)
                 proc1 = subprocess.Popen(command1.split())
