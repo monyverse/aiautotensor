@@ -1,5 +1,5 @@
-# autominer
-automated bittensor mining
+# autotensor
+automated bittensor serving
 
 Recommended to setup a ssh config. This will make transferring keys and files easier later on:
 
