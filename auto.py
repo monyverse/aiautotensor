@@ -17,7 +17,7 @@ NOTIF1 = Prompt.ask(
     choices=["yes", "no"],
     default="yes",
 )
-if NOTIF1 == "yes",
+if NOTIF1 == "yes":
     TPB = Prompt.ask(
         "What would you like the TPB to be for GPUs that are serving?",
         choices=["0", "64", "128", "256"],
