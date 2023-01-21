@@ -35,7 +35,7 @@ Step 2:
 
 Open the directory:
 
-		cd autominer
+		cd autotensor
 		
 
 Step 2: 
@@ -109,7 +109,7 @@ Step 3:
 
 Copy keys to each machine:
 		
-		scp -r autominer <user>
+		scp -r autotensor <user>
 		
 
 Step 4:
