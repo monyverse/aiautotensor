@@ -161,7 +161,7 @@ while True:
                 print("Used GPUs: ", " ".join(used_gpus))
                 print("Unused GPUs: ", " ".join(unused_gpus))
                 command1 = make_command(" ".join(unused_gpus), 512)
-                command2 = make_command(" ".join(used_gpus), {TPB})
+                command2 = make_command(" ".join(used_gpus), TPB)
                 print(command1)
                 print(command2)
                 proc1 = subprocess.Popen(command1.split())
