@@ -147,15 +147,7 @@ Turn on the trust monitor and follow the prompts (this feature is still experime
 		
 **ROADMAP auto.py:**
 *Features currently in production*
-1. Prompt use for registration settings.
-				       ```
-                                       Ex: Would you like to:
-                                            a) set TPB to 256 is a card is already serving a hotkey?
-                                            b) set TPB to 128 is a card is already serving a hotkey?
-                                            c) set TPB to 128 is a card is already serving a hotkey?
-                                            d) turn registration off for all cards already serving a hotkey?	
-				       ```
-2. Log registered keys at their block creation into a yaml for the trust monitor.
+1. Log registered keys at their block creation into a yaml for the trust monitor.
 
 							 
 							 
