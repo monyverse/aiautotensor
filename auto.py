@@ -6,23 +6,26 @@ import torch
 import yaml
 from rich.prompt import Confirm, Prompt, PromptBase
 import nvidia_smi
+import json
+
+data = {}
 
 # User prompts
 MACHINE = Prompt.ask(
     "Which machine id is this?"
-)    
+)
 os.environ["MACHINE_ID"] = MACHINE
 NOTIF1 = Prompt.ask(
     "Would you like to cut TPB for registration if a GPU is serving a model?",
-    choices=["yes", "no"],
+    choices=["yes", "YES"],
     default="yes",
 )
-if NOTIF1 == "yes":
+if NOTIF1.lower() == "yes":
     TPB = Prompt.ask(
         "What would you like the TPB to be for GPUs that are serving?",
         choices=["0", "64", "128", "256", "512"],
         default="512",
-)   
+)
 NOTIF2 = Prompt.ask(
     "Would you like to turn on discord notifications?",
     choices=["yes", "no"],
@@ -46,6 +49,20 @@ def is_registered(wallet, network, subtensor: "bt.Subtensor" = None) -> bool:
     if subtensor is None:
         subtensor = bt.subtensor(network=network)
     return subtensor.is_hotkey_registered(wallet.hotkey.ss58_address)
+
+# log keys into trust monitor json
+def log_registered_key(wallet):
+    hotkey_str = repr(wallet.coldkey_file) + wallet.hotkey_str
+    subtensor = bt.subtensor(network = 'nobunaga' )
+
+    data = []
+    if os.path.exists("registration_history.json"):
+        data = json.load(open("registration_history.json", "r"))
+    data.append(
+        {"nwaame": hotkey_str, "block": subtensor.get_current_block()}
+        )
+    with open("registration_history", "w") as fh:
+        json.dump(data, fh)
 
 # Check GPU VRAM usuage
 def gpu_is_used(i):
@@ -121,7 +138,7 @@ while True:
                 # Kill pm2 processes of deregistered keys
                 if check_is_running(expected_proc_name):
                     kill_pm2(expected_proc_name)
-                    if NOTIF == "yes":
+                    if NOTIF2 == "yes":
                         command = f'curl -H "Content-Type: application/json" -d \'{{"content": "@here The {wallet.hotkey_str} key on {machine_id} has been deregistered!"}}\' "{API_KEY}"'
                         print(command)
                         subprocess.run(command, shell=True)
@@ -160,14 +177,22 @@ while True:
                 command2 = make_command(" ".join(used_gpus), TPB)
                 print(command1)
                 print(command2)
+                # multi processing for alternating TPB
                 proc1 = subprocess.Popen(command1.split())
                 proc2 = subprocess.Popen(command2.split())
 
                 for proc in (proc1, proc2): proc.wait()
+                log_registered_key(wallet)
 
-                if NOTIF == "yes" and MACHINE == "machine1":
+                if NOTIF2 == "yes" and MACHINE == "machine1":
                     command = f'curl -H "Content-Type: application/json" -d \'{{"content": "@here The {wallet.hotkey_str} key on {machine_id} has been registered!"}}\' "{API_KEY}"'
                     subprocess.run(command, shell=True)
+
+                subtensor = bt.subtensor(network=gpu_config['network'])
+                current_block = subtensor.get_current_block()
+
+                for gpu_index, gpu_config in enumerate(machine_config):
+                    data[gpu_config["keyfile"]] = {"block": current_block}
 
             if machine_id == os.getenv("MACHINE_ID"):
                 deploy_core_server(gpu_index, gpu_config, wallet)
