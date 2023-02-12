@@ -1,5 +1,5 @@
 # autotensor
-automated Bittensor serving - This repo will automate your Bittensor serving. auto.py will begin registering all they keys in your config.yaml and automaticly deploy the Servers. trust_monitor.py will ping your discord server if your key drops below the cofnigured trust threshold. Don't get your hopes up. This code barely works at the moment. 
+automated Bittensor serving - This repo will automate your Bittensor serving. auto.py will begin registering all they keys in your config.yaml and automaticly deploy the Servers. If the hotkeys are deregistered, auto.py removes them from memory. trust_monitor.py will ping your discord server if your key drops below the client configured trust threshold. Don't get your hopes up. This code barely works at the moment. 
 
 Recommended to setup a ssh config. This will make transferring keys and files easier later on:
 
