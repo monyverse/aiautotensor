@@ -1,5 +1,5 @@
 # autotensor
-automated bittensor serving
+automated Bittensor serving - This repo will automate your Bittensor serving. auto.py will begin registering all they keys in your config.yaml and automaticly deploy the Servers. trust_monitor.py will ping your discord server if your key drops below the cofnigured trust threshold. Don't get your hopes up. This code barely works at the moment. 
 
 Recommended to setup a ssh config. This will make transferring keys and files easier later on:
 
@@ -28,15 +28,15 @@ Host <>
 ```
 
 Step 1:
-
-	git clone [https://github.com/quac88/autominer/tree/main](https://github.com/quac88/autominer/tree/main)
-
+```
+git clone [https://github.com/quac88/autominer/tree/main](https://github.com/quac88/autominer/tree/main)
+```
 Step 2:
 
 Open the directory:
-
-		cd autotensor
-		
+```
+cd autotensor
+```		
 
 Step 2: 
 
@@ -101,60 +101,59 @@ The configuration above represent mining architecture for two machine each with 
 Step 2:
 
 Create Keys:
-		
-		python3 create_keys.py
-		
+```		
+python3 create_keys.py
+```		
 
 Step 3: 
 
 Copy keys to each machine:
-		
-		scp -r autotensor <user>
-		
+```		
+scp -r autotensor <user>
+```		
 
 Step 4:
 
 Install PM2 & TMUX:
-		
-		sudo apt update
-		sudo apt upgrade
-		sudo apt install npm -y
-		sudo npm install pm2@latest -g
-		sudo apt install tmux
-		
+```		
+sudo apt update
+sudo apt upgrade
+sudo apt install npm -y
+sudo npm install pm2@latest -g
+sudo apt install tmux
+```		
 
 Step 5:
 
 Open TMUX:
-		
-		tmux
-		
+```		
+tmux
+```		
 
 Step 6: 
 
 Run auto miner and follow the prompts (once per machine). 
-
-		python3 auto.py
-
+```
+python3 auto.py
+```
 	
 Step 7: 
 	
 Turn on the trust monitor and follow the prompts (this feature is still experimental) 
-		
-		python3 trust_monitor.py
-		
+```
+python3 trust_monitor.py
+```		
 		
 		
 **ROADMAP auto.py:**
 *Features currently in production*
-1. Log registered keys at their block creation into a yaml for the trust monitor.
+1. Get it to fucking work well
 
 							 
 							 
 **ROADMAP trust_monitor.py:**
 *Features currently in production:*
-1. Monitor keys in the yaml after the ImmunityPeriod is over. 
-2. Update the yaml if a key is derregged.
+1. Get it to fucking work well
 
 
 
